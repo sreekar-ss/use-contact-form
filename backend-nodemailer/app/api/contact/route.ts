@@ -1,6 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
+// CORS headers
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+// Handle OPTIONS request for CORS
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
+
 // Create transporter
 let transporter: nodemailer.Transporter | null = null;
 
@@ -50,7 +62,7 @@ export async function POST(req: NextRequest) {
             ...((!message && { message: ['Message is required'] })),
           }
         },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -65,7 +77,7 @@ export async function POST(req: NextRequest) {
             email: ['Please provide a valid email address']
           }
         },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -78,7 +90,7 @@ export async function POST(req: NextRequest) {
           success: false,
           message: 'Email service is not configured. Please check server logs.',
         },
-        { status: 500 }
+        { status: 500, headers: corsHeaders }
       );
     }
 
@@ -150,7 +162,7 @@ This email was sent from your contact form via Nodemailer.
           messageId: info.messageId,
         }
       },
-      { status: 200 }
+      { status: 200, headers: corsHeaders }
     );
 
   } catch (error: any) {
@@ -163,7 +175,7 @@ This email was sent from your contact form via Nodemailer.
           success: false,
           message: 'Email authentication failed. Check your SMTP credentials.',
         },
-        { status: 500 }
+        { status: 500, headers: corsHeaders }
       );
     }
 
@@ -173,7 +185,7 @@ This email was sent from your contact form via Nodemailer.
           success: false,
           message: 'Could not connect to email server. Check your SMTP settings.',
         },
-        { status: 500 }
+        { status: 500, headers: corsHeaders }
       );
     }
 
@@ -182,7 +194,7 @@ This email was sent from your contact form via Nodemailer.
         success: false,
         message: 'Failed to send email. Please try again later.',
       },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
@@ -210,7 +222,7 @@ export async function GET() {
         process.env.SMTP_PASS
       ),
     },
-    { status: 200 }
+    { status: 200, headers: corsHeaders }
   );
 }
 
