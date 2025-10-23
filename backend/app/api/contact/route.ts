@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
     const data = await resend.emails.send({
       from: fromEmail,
       to: toEmail,
-      replyTo: email,
+      reply_to: email,
       subject: emailSubject,
       html: htmlBody,
     });
