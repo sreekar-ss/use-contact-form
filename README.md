@@ -1,9 +1,19 @@
 # use-contact-form
 
-A lightweight, TypeScript-first React hook for handling contact form submissions with your backend server.
+A lightweight, TypeScript-first React hook for handling contact form submissions with your own backend server.
+
+**💡 You control the backend, we handle the frontend complexity.**
 
 [![npm version](https://badge.fury.io/js/use-contact-form.svg)](https://www.npmjs.com/package/use-contact-form)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+🚀 **[Live Demo](https://use-contact-form.vercel.app)** | 📚 **[Full Documentation](https://github.com/sreekar-ss/use-contact-form)**
+
+## Why use-contact-form?
+
+This hook doesn't send emails directly. Instead, it provides a robust interface for **submitting to YOUR backend**, where YOU control the email service (Resend, SendGrid, Nodemailer, etc.), keep API keys secure, and add spam protection.
+
+Think of it as **React Query for contact forms** - it handles states, retries, errors, and cancellation while you focus on your API.
 
 ## Features
 
@@ -19,18 +29,19 @@ A lightweight, TypeScript-first React hook for handling contact form submissions
 ## Installation
 
 ```bash
+# npm
 npm install use-contact-form
-```
 
-```bash
+# yarn
 yarn add use-contact-form
-```
 
-```bash
+# pnpm
 pnpm add use-contact-form
 ```
 
 ## Quick Start
+
+> **Note:** You need a backend endpoint to send emails. See [Backend Examples](#backend-examples) below.
 
 ### Frontend (React)
 
@@ -354,25 +365,40 @@ test('sends email successfully', async () => {
 });
 ```
 
-## Examples
+## Complete Examples
 
-See the `examples/` directory for complete working examples:
+Check out the repository for full working examples:
 
-- **Next.js + Resend** - Modern Next.js 14 app with Resend email service
-- **Express + Nodemailer** - Traditional Express server with SMTP
-- **Vanilla React** - Simple React component example
+- **[Next.js + Resend](https://github.com/sreekar-ss/use-contact-form/tree/main/backend)** - Modern Next.js 14 app with Resend (deployed at [use-contact-form.vercel.app](https://use-contact-form.vercel.app))
+- **[Next.js + Nodemailer](https://github.com/sreekar-ss/use-contact-form/tree/main/backend-nodemailer)** - Next.js with Gmail/SMTP
+- **[Express Example](https://github.com/sreekar-ss/use-contact-form/tree/main/examples/express-nodemailer)** - Traditional Express server
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+## FAQ
+
+**Q: Does this package send emails directly?**  
+A: No. You implement your own backend API, which gives you full control over email services, API keys, and security.
+
+**Q: Which email services are supported?**  
+A: Any! Resend, SendGrid, Nodemailer, AWS SES, Mailgun - use whatever you prefer on your backend.
+
+**Q: Can I use this with React Server Components?**  
+A: This is a client-side hook (uses `useState`). For RSC, use Server Actions or API routes as your backend.
+
 ## License
 
-MIT © [Your Name]
+MIT © Sreekar Siddula
 
 ## Support
 
-- 📝 [Documentation](https://github.com/yourusername/use-contact-form)
-- 🐛 [Issue Tracker](https://github.com/yourusername/use-contact-form/issues)
-- 💬 [Discussions](https://github.com/yourusername/use-contact-form/discussions)
+- 📝 [Documentation](https://github.com/sreekar-ss/use-contact-form)
+- 🐛 [Issue Tracker](https://github.com/sreekar-ss/use-contact-form/issues)
+- 💬 [Discussions](https://github.com/sreekar-ss/use-contact-form/discussions)
+
+---
+
+**Made with ❤️ by [Sreekar Siddula](https://github.com/sreekar-ss)**
 

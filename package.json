@@ -25,11 +25,15 @@
     "typescript",
     "react-hooks"
   ],
-  "author": "Your Name",
+  "author": "Sreekar Siddula <sai06sreekar@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/use-contact-form"
+    "url": "https://github.com/sreekar-ss/use-contact-form"
+  },
+  "homepage": "https://github.com/sreekar-ss/use-contact-form#readme",
+  "bugs": {
+    "url": "https://github.com/sreekar-ss/use-contact-form/issues"
   },
   "peerDependencies": {
     "react": ">=16.8.0"

@@ -5,6 +5,7 @@ node_modules/
 
 # Testing
 /coverage
+test-app.html
 
 # Next.js
 .next/
@@ -39,3 +40,11 @@ Thumbs.db
 
 # Vercel
 .vercel
+
+# Backend example deployments
+backend/.env
+backend/node_modules/
+backend/.next/
+backend-nodemailer/.env
+backend-nodemailer/node_modules/
+backend-nodemailer/.next/
