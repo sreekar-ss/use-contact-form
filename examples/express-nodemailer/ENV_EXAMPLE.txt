@@ -1,0 +1,15 @@
+# Server Configuration
+PORT=3001
+
+# SMTP Configuration (Example using Gmail)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+
+# Email Settings
+EMAIL_FROM_NAME=Contact Form
+EMAIL_FROM=your-email@gmail.com
+EMAIL_TO=recipient@example.com
+
