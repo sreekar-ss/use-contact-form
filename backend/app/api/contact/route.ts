@@ -107,9 +107,7 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         message: 'Email sent successfully!',
-        data: {
-          id: data.id,
-        }
+        data: data,
       },
       { status: 200, headers: corsHeaders }
     );
