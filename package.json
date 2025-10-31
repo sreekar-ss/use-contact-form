@@ -1,6 +1,6 @@
 {
   "name": "use-contact-form",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A lightweight React hook for handling contact form submissions with your backend",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -60,4 +60,3 @@
     "node": ">=14.0.0"
   }
 }
-
