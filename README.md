@@ -221,6 +221,227 @@ useEffect(() => {
 }, [loading, cancel]);
 ```
 
+## Backend Setup (Step-by-step)
+
+### Option A: Next.js + Resend (recommended)
+
+1) Install dependencies
+
+```bash
+npm install resend
+```
+
+2) Create API route `app/api/contact/route.ts`
+
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// CORS (allow all; restrict in production if needed)
+const cors = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type'
+};
+
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: cors });
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const { name, email, message, subject } = await req.json();
+
+    if (!name || !email || !message) {
+      return NextResponse.json(
+        { success: false, message: 'Missing required fields' },
+        { status: 400, headers: cors }
+      );
+    }
+
+    const data = await resend.emails.send({
+      from: process.env.EMAIL_FROM || 'Contact Form <onboarding@resend.dev>',
+      to: process.env.EMAIL_TO || 'delivered@resend.dev',
+      reply_to: email,
+      subject: subject || `Contact from ${name}`,
+      html: `<p><strong>From:</strong> ${name} (${email})</p><p>${message}</p>`
+    });
+
+    return NextResponse.json({ success: true, data }, { headers: cors });
+  } catch (e) {
+    return NextResponse.json({ success: false, message: 'Server error' }, { status: 500, headers: cors });
+  }
+}
+```
+
+3) Set environment variables
+
+```bash
+# .env
+RESEND_API_KEY=your_resend_api_key
+EMAIL_FROM="Contact Form <onboarding@resend.dev>"
+EMAIL_TO=you@example.com
+```
+
+4) Test locally
+
+```bash
+curl -X POST http://localhost:3000/api/contact \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"John","email":"john@example.com","message":"Hello"}'
+```
+
+5) Deploy to Vercel (detailed)
+
+   1. Push your project to GitHub (or GitLab/Bitbucket)
+   2. Go to Vercel and click "New Project" → import your repo
+   3. Framework Preset: Next.js (auto-detected)
+   4. Environment Variables (add exactly as in your .env):
+      - `RESEND_API_KEY`
+      - `EMAIL_FROM` (e.g. `Contact Form <onboarding@resend.dev>` or your verified domain)
+      - `EMAIL_TO` (where you want to receive messages)
+   5. Click "Deploy"
+   6. After deploy, verify endpoint works:
+
+   ```bash
+   curl -X POST https://<your-vercel-app>.vercel.app/api/contact \
+     -H 'Content-Type: application/json' \
+     -d '{"name":"John","email":"john@example.com","message":"Hello"}'
+   ```
+
+   7. In your frontend, set the hook endpoint to the deployed API URL:
+
+   ```tsx
+   const { sendEmail } = useContactForm({
+     endpoint: 'https://<your-vercel-app>.vercel.app/api/contact',
+   });
+   ```
+
+   Notes for Resend:
+   - Free testing may only allow sending to your account email until you verify a domain.
+   - To send to arbitrary recipients, verify a domain at Resend and use a `from` address on that domain.
+
+—
+
+### Option B: Next.js + Nodemailer (SMTP/Gmail)
+
+1) Install dependencies
+
+```bash
+npm install nodemailer
+```
+
+2) Create API route `app/api/contact/route.ts` (SMTP)
+
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+import nodemailer from 'nodemailer';
+
+const cors = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type'
+};
+
+export async function OPTIONS() { return NextResponse.json({}, { headers: cors }); }
+
+export async function POST(req: NextRequest) {
+  const { name, email, message, subject } = await req.json();
+  if (!name || !email || !message) return NextResponse.json({ success: false }, { status: 400, headers: cors });
+
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT || '587'),
+    secure: process.env.SMTP_SECURE === 'true',
+    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+  });
+
+  const info = await transporter.sendMail({
+    from: process.env.EMAIL_FROM || process.env.SMTP_USER,
+    to: process.env.EMAIL_TO || process.env.SMTP_USER,
+    replyTo: email,
+    subject: subject || `Contact from ${name}`,
+    text: message,
+  });
+
+  return NextResponse.json({ success: true, id: info.messageId }, { headers: cors });
+}
+```
+
+3) Environment variables
+
+```bash
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your@gmail.com
+SMTP_PASS=your_app_password   # Use Gmail App Passwords
+EMAIL_FROM=your@gmail.com
+EMAIL_TO=your@gmail.com
+```
+
+—
+
+### Option C: Express + Nodemailer
+
+```bash
+npm install express nodemailer cors
+```
+
+```javascript
+const express = require('express');
+const cors = require('cors');
+const nodemailer = require('nodemailer');
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
+  auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+});
+
+app.post('/api/contact', async (req, res) => {
+  const { name, email, message, subject } = req.body;
+  if (!name || !email || !message) return res.status(400).json({ success: false });
+
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to: process.env.EMAIL_TO,
+    replyTo: email,
+    subject: subject || `Contact from ${name}`,
+    text: message,
+  });
+
+  res.json({ success: true });
+});
+
+app.listen(3000);
+```
+
+—
+
+### CORS notes
+
+- Local testing (file:// or different ports) requires CORS. The examples above include permissive `*` headers.
+- For production, restrict origins to your domain(s).
+
+—
+
+### Vercel troubleshooting
+
+- 400 "Missing required fields": ensure `name`, `email`, and `message` are in the POST body
+- 500 with Resend: confirm `RESEND_API_KEY`, `EMAIL_FROM`, and `EMAIL_TO` are set in Vercel Project → Settings → Environment Variables
+- Resend 403 "testing emails only": verify a domain in Resend and update `EMAIL_FROM` to use that domain
+- CORS error from browser: confirm your route includes an `OPTIONS` handler and returns `Access-Control-Allow-*` headers on all responses
+- Receiving but wrong inbox: check `EMAIL_TO` in Vercel env
+
+—
+
 ## Backend Examples
 
 ### Next.js with Resend
