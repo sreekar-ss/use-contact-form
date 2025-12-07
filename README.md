@@ -126,6 +126,44 @@ export async function POST(req: Request) {
 
 ## Advanced Usage
 
+### Email Templates (HTML/Text)
+
+You can use built-in email templates to render consistent emails on your backend.
+
+```ts
+import { renderHtmlTemplate, renderTextTemplate } from 'use-contact-form';
+
+// Inside your backend route/handler
+const html = renderHtmlTemplate({
+  name: 'John',
+  email: 'john@example.com',
+  message: 'Hello there!',
+  subject: 'Contact from website',
+});
+
+const text = renderTextTemplate({
+  name: 'John',
+  email: 'john@example.com',
+  message: 'Hello there!',
+});
+
+// Send via your email service
+// e.g. Resend/Nodemailer body: { html, text }
+```
+
+Options:
+
+```ts
+const html = renderHtmlTemplate(data, {
+  theme: 'minimal' | 'branded' | 'dark',
+  brandColor: '#4F46E5',
+  logoUrl: 'https://your.cdn/logo.svg',
+  footerText: 'Sent from my website',
+});
+```
+
+All user content is HTML-escaped by default.
+
 ### With TypeScript
 
 ```typescript

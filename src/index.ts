@@ -12,3 +12,9 @@ export type {
   ValidationResult,
 } from './types';
 
+export {
+  renderHtmlTemplate,
+  renderTextTemplate,
+} from './templates';
+export type { TemplateOptions, TemplateTheme } from './templates';
+
